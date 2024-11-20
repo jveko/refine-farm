@@ -8,35 +8,35 @@ import {
   SilentRequest,
 } from "@azure/msal-browser";
 const {
-  FARM_AUTH_AZURE_CLIENT_ID: AUTH_AZURE_CLIENT_ID,
-  FARM_AUTH_AZURE_AUTHORITY: AUTH_AZURE_AUTHORITY,
-  FARM_AUTH_AZURE_REDIRECT_URI: AUTH_AZURE_REDIRECT_URI,
-  FARM_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI: AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
-  FARM_AUTH_AZURE_SCOPE: AUTH_AZURE_SCOPE,
+  VITE_AUTH_AZURE_CLIENT_ID: VITE_AUTH_AZURE_CLIENT_ID,
+  VITE_AUTH_AZURE_AUTHORITY: VITE_AUTH_AZURE_AUTHORITY,
+  VITE_AUTH_AZURE_REDIRECT_URI: VITE_AUTH_AZURE_REDIRECT_URI,
+  VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI: VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
+  VITE_AUTH_AZURE_SCOPE: VITE_AUTH_AZURE_SCOPE,
 } = import.meta.env;
 
-if (!AUTH_AZURE_CLIENT_ID) {
+if (!VITE_AUTH_AZURE_CLIENT_ID) {
   throw new Error("AUTH_AZURE_CLIENT_ID is not set");
 }
-if (!AUTH_AZURE_AUTHORITY) {
+if (!VITE_AUTH_AZURE_AUTHORITY) {
   throw new Error("AUTH_AZURE_AUTHORITY is not set");
 }
-if (!AUTH_AZURE_REDIRECT_URI) {
+if (!VITE_AUTH_AZURE_REDIRECT_URI) {
   throw new Error("AUTH_AZURE_REDIRECT_URI is not set");
 }
-if (!AUTH_AZURE_POST_LOGOUT_REDIRECT_URI) {
+if (!VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI) {
   throw new Error("AUTH_AZURE_POST_LOGOUT_REDIRECT_URI is not set");
 }
-if (!AUTH_AZURE_SCOPE) {
+if (!VITE_AUTH_AZURE_SCOPE) {
   throw new Error("AUTH_AZURE_SCOPE is not set");
 }
 
 const msalConfig: Configuration = {
   auth: {
-    clientId: AUTH_AZURE_CLIENT_ID,
-    authority: AUTH_AZURE_AUTHORITY,
-    redirectUri: AUTH_AZURE_REDIRECT_URI,
-    postLogoutRedirectUri: AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
+    clientId: VITE_AUTH_AZURE_CLIENT_ID,
+    authority: VITE_AUTH_AZURE_AUTHORITY,
+    redirectUri: VITE_AUTH_AZURE_REDIRECT_URI,
+    postLogoutRedirectUri: VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
   },
   cache: {
     cacheLocation: "localStorage",
@@ -71,11 +71,11 @@ msalInstance.addEventCallback(async (event) => {
 });
 
 export const loginRequest = {
-  scopes: [AUTH_AZURE_SCOPE],
+  scopes: [VITE_AUTH_AZURE_SCOPE],
 };
 
 export const tokenRequest = {
-  scopes: [AUTH_AZURE_SCOPE],
+  scopes: [VITE_AUTH_AZURE_SCOPE],
 };
 
 export const graphConfig = {
