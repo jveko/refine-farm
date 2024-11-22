@@ -2,9 +2,9 @@ import { AxiosInstance, isAxiosError } from "axios";
 import { AccessControlProvider } from "@refinedev/core";
 import { axiosAuth } from "@/config";
 
-const { FARM_DOMAIN_APP: DOMAIN_APP } = import.meta.env;
+const { VITE_DOMAIN_APP: VITE_DOMAIN_APP } = import.meta.env;
 
-if (!DOMAIN_APP) {
+if (!VITE_DOMAIN_APP) {
   throw new Error("DOMAIN_APP is not defined");
 }
 
@@ -21,7 +21,7 @@ const accessControlProviderFactory = (
         "permissions/check",
         {
           params: {
-            domain: DOMAIN_APP,
+            domain: VITE_DOMAIN_APP,
             resource: resource,
             subject: "DPL",
             action: action,
