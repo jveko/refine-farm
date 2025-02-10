@@ -1,8 +1,8 @@
 import { GlobalStyle } from "@/config";
-import { LoginPage } from "@/pages/login";
+import { AuthPage } from "@/pages/auth";
 import { Authenticated } from "@refinedev/core";
-import { NavigateToResource } from "@refinedev/react-router-v6";
-import { Outlet, RouteObject } from "react-router-dom";
+import { NavigateToResource } from "@refinedev/react-router";
+import { Outlet, RouteObject } from "react-router";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -22,7 +22,7 @@ export const PublicRoutes: RouteObject[] = [
     children: [
       {
         path: "/login",
-        element: <LoginPage />,
+        element: <AuthPage />,
       },
     ],
   }

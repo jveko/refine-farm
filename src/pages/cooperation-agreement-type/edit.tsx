@@ -1,8 +1,8 @@
 import { useBack, useNavigation } from "@refinedev/core";
 import React, { PropsWithChildren, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { DeleteButton } from "@refinedev/antd";
-import { useDocumentTitle } from "@refinedev/react-router-v6";
+import { useDocumentTitle } from "@refinedev/react-router";
 import { CooperationAgreementTypeForm, useCooperationAgreementTypeForm } from "@/features/cooperation-agreement-type";
 import { RefineEdit } from "@/components/ui/refine";
 

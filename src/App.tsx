@@ -5,16 +5,13 @@ import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
 import { App as AntdApp } from "antd";
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier, } from "@refinedev/react-router-v6";
-import { userAtom } from "./stores";
-import { useAtom } from "jotai";
+import { createBrowserRouter, Outlet } from "react-router";
+import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier, } from "@refinedev/react-router";
 import { useMsal } from "@azure/msal-react";
 import { queryClient } from "@/config";
 import { dataProvider, accessControlProvider, authProvider } from "@/providers";
 import { FullScreenLoading } from "@/components/ui";
 import { resources } from "./resources";
-import { PublicRoutes } from "./routes/public-routes";
 import { router } from "./routes";
 
 export const RootRouter = createBrowserRouter([
@@ -42,7 +39,7 @@ function App() {
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,
             useNewQueryKeys: true,
-            projectId: "JapdgP-Ptd9DO-0zi8mO",
+            projectId: "JFHu8f-DJOMPr-NRMnXP",
             reactQuery: {
               clientConfig: queryClient,
             },
@@ -63,8 +60,7 @@ function App() {
 }
 
 function BaseLayout({ children }: React.PropsWithChildren) {
-  const { instance, inProgress } = useMsal();
-  const [user, setUser] = useAtom(userAtom);
+  const { inProgress } = useMsal();
 
   if (inProgress === "login" || inProgress === "handleRedirect") {
     return <FullScreenLoading />;

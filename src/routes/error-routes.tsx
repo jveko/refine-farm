@@ -2,7 +2,7 @@ import { themeConfig, GlobalStyle } from "@/config/antd";
 import { ContentLayout } from "../components/layout";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
 import { ConfigProvider } from "antd";
-import { Outlet, RouteObject } from "react-router-dom";
+import { Outlet, RouteObject } from "react-router";
 
 export const ErrorRoutes: RouteObject[] = [
   {

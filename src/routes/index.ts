@@ -1,4 +1,4 @@
-import { RouteObject } from "react-router-dom";
+import { RouteObject } from "react-router";
 import { ErrorRoutes } from "./error-routes";
 import { PublicRoutes } from "./public-routes";
 import { ProtectedRoutes } from "./protected-routes";

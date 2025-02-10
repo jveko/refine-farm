@@ -1,6 +1,8 @@
 import { TOKEN_KEY } from "@/constants";
 import {
   AccountInfo,
+  AuthenticationResult,
+  BrowserCacheLocation,
   Configuration,
   EventPayload,
   EventType,
@@ -11,7 +13,8 @@ const {
   VITE_AUTH_AZURE_CLIENT_ID: VITE_AUTH_AZURE_CLIENT_ID,
   VITE_AUTH_AZURE_AUTHORITY: VITE_AUTH_AZURE_AUTHORITY,
   VITE_AUTH_AZURE_REDIRECT_URI: VITE_AUTH_AZURE_REDIRECT_URI,
-  VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI: VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
+  VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI:
+    VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
   VITE_AUTH_AZURE_SCOPE: VITE_AUTH_AZURE_SCOPE,
 } = import.meta.env;
 
@@ -39,14 +42,16 @@ const msalConfig: Configuration = {
     postLogoutRedirectUri: VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
   },
   cache: {
-    cacheLocation: "localStorage",
+    cacheLocation: BrowserCacheLocation.LocalStorage,
     storeAuthStateInCookie: true,
+    secureCookies: import.meta.env.MODE === "production",
   },
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 
 msalInstance.addEventCallback(async (event) => {
+  console.log(event);
   if (event.eventType === EventType.LOGIN_SUCCESS) {
     const payload: EventPayload = event.payload;
     msalInstance.setActiveAccount(payload as AccountInfo);
@@ -66,18 +71,14 @@ msalInstance.addEventCallback(async (event) => {
     }
   }
   if (event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
+    localStorage.setItem(
+      TOKEN_KEY,
+      (event.payload as AuthenticationResult).accessToken
+    );
     msalInstance.setActiveAccount(event.payload as AccountInfo);
   }
 });
 
-export const loginRequest = {
-  scopes: [VITE_AUTH_AZURE_SCOPE],
-};
-
 export const tokenRequest = {
   scopes: [VITE_AUTH_AZURE_SCOPE],
-};
-
-export const graphConfig = {
-  graphMeEndpoint: "ENTER_THE_GRAPH_ENDPOINT_HERE/v1.0/me",
 };

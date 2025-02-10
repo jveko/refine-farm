@@ -20,7 +20,7 @@ export const authProvider: AuthProvider = {
     msalInstance.setActiveAccount(null);
     return {
       success: true,
-      redirectTo: "/login",
+      redirectTo: "/login?isLoggedOut=true",
     };
   },
   check: async () => {

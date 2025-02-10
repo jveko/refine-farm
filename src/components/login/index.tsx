@@ -61,7 +61,7 @@ export const LoginPage: React.FC<LoginProps> = ({
   const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
 
   const authProvider = useActiveAuthProvider();
-  const { mutate: login, isLoading } = useLogin<LoginFormTypes>({
+  const { mutate: login } = useLogin<LoginFormTypes>({
     v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
   });
 
@@ -105,7 +105,7 @@ export const LoginPage: React.FC<LoginProps> = ({
     if (providers && providers.length > 0) {
       return (
         <>
-          {providers.map((provider) => {
+          {providers.map((provider, i) => {
             return (
               <div
                 style={{
@@ -114,6 +114,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   alignItems: "center",
                   marginBottom: "8px",
                 }}
+                key={i}
               >
                 <Button
                   key={provider.name}
@@ -160,8 +161,10 @@ export const LoginPage: React.FC<LoginProps> = ({
   const CardContent = (
     <Card
       title={CardTitle}
-      headStyle={headStyles}
-      bodyStyle={bodyStyles}
+      styles={{
+        header:headStyles,
+        body:bodyStyles
+      }}
       style={{
         ...containerStyles,
         backgroundColor: "black",
@@ -265,7 +268,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                 type="primary"
                 size="large"
                 htmlType="submit"
-                loading={isLoading}
+                loading={true}
                 block
               >
                 {translate("pages.login.signin", "Sign in")}

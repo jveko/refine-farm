@@ -1,9 +1,12 @@
-import { AuthPage, type AuthProps } from "@refinedev/antd";
-import React from "react";
+import { type AuthProps } from "@refinedev/antd";
+import React, { useEffect } from "react";
 import { WindowsFilled } from "@ant-design/icons";
 import { createStyles } from "antd-style";
+import { LoginPage } from "@/components";
 import LogoCompany from "@/assets/logo-tob.png";
 import BackgroundLogin from "@/assets/background-login.jpg";
+import { LoginFormTypes, useLogin } from "@refinedev/core";
+import { useSearchParams } from "react-router";
 
 const authWrapperProps = {
   style: {
@@ -20,8 +23,8 @@ const renderAuthContent = (content: React.ReactNode) => {
         margin: "auto",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: "center", // Center horizontally
+        justifyContent: "center", // Center vertically
         paddingTop: "15px",
       }}
     >
@@ -38,11 +41,21 @@ const renderAuthContent = (content: React.ReactNode) => {
   );
 };
 
-export const LoginPage: React.FC<AuthProps> = () => {
+export const AuthPage: React.FC<AuthProps> = ({ }) => {
   const { styles } = useStyles();
+
+  const { mutate: login } = useLogin<LoginFormTypes>();
+  var [params, setParams] = useSearchParams();
+
+  useEffect(() => {
+    if (params.has("isLoggedOut") && params.get("isLoggedOut") == "true") return;
+    // login({
+    //   providerName: "microsoft",
+    // });
+  }, [login, params]);
+
   return (
-    <AuthPage
-      type="login"
+    <LoginPage
       wrapperProps={authWrapperProps}
       renderContent={renderAuthContent}
       contentProps={{
@@ -70,7 +83,7 @@ export const LoginPage: React.FC<AuthProps> = () => {
   );
 };
 
-const useStyles = createStyles(({ token }) => {
+const useStyles = createStyles(({ }) => {
   return {
     card: {
       ".ant-btn": {

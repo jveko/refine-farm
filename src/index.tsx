@@ -7,14 +7,14 @@ import React from 'react';
 import { MsalProvider } from '@azure/msal-react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/config';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 
 dayjs.extend(relativeTime);
 
 const container = document.querySelector('#root');
 const root = createRoot(container!);
 
-msalInstance.initialize();
+await msalInstance.initialize();
 
 root.render(
   <React.StrictMode>
