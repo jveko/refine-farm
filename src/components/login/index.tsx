@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   type LoginPageProps,
   type LoginFormTypes,
   useLink,
   useRouterType,
   useActiveAuthProvider,
+  HttpError,
 } from "@refinedev/core";
 import {
   Row,
@@ -21,8 +22,12 @@ import {
   Divider,
   type FormProps,
   theme,
+  Spin,
+  Alert,
+  Space,
 } from "antd";
 import { useLogin, useTranslate, useRouterContext } from "@refinedev/core";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import {
   BigtitleStyles,
@@ -31,9 +36,13 @@ import {
   headStyles,
   layoutStyles,
   titleStyles,
+  logoContainerStyles,
+  providerButtonStyles,
+  loadingOverlayStyles,
 } from "./styles";
 
 type LoginProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
+
 /**
  * **refine** has a default login page form which is served on `/login` route when the `authProvider` configuration is provided.
  *
@@ -57,13 +66,47 @@ export const LoginPage: React.FC<LoginProps> = ({
   const routerType = useRouterType();
   const Link = useLink();
   const { Link: LegacyLink } = useRouterContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
 
   const authProvider = useActiveAuthProvider();
-  const { mutate: login } = useLogin<LoginFormTypes>({
+  const { mutate: login, isLoading: isLoginLoading } = useLogin<LoginFormTypes>({
     v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
   });
+
+  // Update loading state based on login mutation
+  useEffect(() => {
+    setIsLoading(isLoginLoading);
+  }, [isLoginLoading]);
+
+  // Handle login errors
+  const handleLoginError = (error: Error | HttpError) => {
+    setLoginError(error?.message || "An error occurred during login");
+    setIsLoading(false);
+  };
+
+  const handleLogin = (providerName?: string, values?: LoginFormTypes) => {
+    setIsLoading(true);
+    setLoginError(null);
+    
+    if (providerName) {
+      login(
+        { providerName },
+        {
+          onError: (error) => handleLoginError(error),
+        }
+      );
+    } else if (values) {
+      login(
+        values,
+        {
+          onError: (error) => handleLoginError(error),
+        }
+      );
+    }
+  };
 
   const PageTitle = (
     <div
@@ -78,7 +121,7 @@ export const LoginPage: React.FC<LoginProps> = ({
   );
 
   const CardTitle = (
-    <Row justify={"center"}>
+    <Row justify="center">
       <Typography.Title
         style={{
           color: "#fff",
@@ -92,7 +135,6 @@ export const LoginPage: React.FC<LoginProps> = ({
         style={{
           color: "#fff",
           marginTop: "2px",
-
           ...titleStyles,
         }}
       >
@@ -112,7 +154,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginBottom: "8px",
+                  marginBottom: "16px",
                 }}
                 key={i}
               >
@@ -121,20 +163,9 @@ export const LoginPage: React.FC<LoginProps> = ({
                   type="default"
                   block
                   icon={provider.icon}
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "80%",
-                    marginBottom: "8px",
-                    backgroundColor: "#F07522",
-                    border: "#F07522",
-                    borderRadius: "20px",
-                  }}
-                  onClick={() =>
-                    login({
-                      providerName: provider.name,
-                    })
-                  }
+                  style={providerButtonStyles}
+                  onClick={() => handleLogin(provider.name)}
+                  disabled={isLoading}
                 >
                   {provider.label}
                 </Button>
@@ -145,7 +176,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             <Divider>
               <Typography.Text
                 style={{
-                  color: token.colorTextLabel,
+                  color: "rgba(255, 255, 255, 0.85)",
                 }}
               >
                 {translate("pages.login.divider", "or")}
@@ -162,21 +193,31 @@ export const LoginPage: React.FC<LoginProps> = ({
     <Card
       title={CardTitle}
       styles={{
-        header:headStyles,
-        body:bodyStyles
+        header: headStyles,
+        body: bodyStyles
       }}
-      style={{
-        ...containerStyles,
-        backgroundColor: "black",
-      }}
+      style={containerStyles}
       {...(contentProps ?? {})}
     >
+      {loginError && (
+        <Alert
+          message="Login Error"
+          description={loginError}
+          type="error"
+          showIcon
+          style={{ marginBottom: "16px" }}
+          closable
+          onClose={() => setLoginError(null)}
+        />
+      )}
+      
       {renderProviders()}
+      
       {!hideForm && (
         <Form<LoginFormTypes>
           layout="vertical"
           form={form}
-          onFinish={(values) => login(values)}
+          onFinish={(values) => handleLogin(undefined, values)}
           requiredMark={false}
           initialValues={{
             remember: false,
@@ -185,7 +226,11 @@ export const LoginPage: React.FC<LoginProps> = ({
         >
           <Form.Item
             name="email"
-            label={translate("pages.login.fields.email", "Email")}
+            label={
+              <Typography.Text style={{ color: "white" }}>
+                {translate("pages.login.fields.email", "Email")}
+              </Typography.Text>
+            }
             rules={[
               {
                 required: true,
@@ -206,11 +251,17 @@ export const LoginPage: React.FC<LoginProps> = ({
             <Input
               size="large"
               placeholder={translate("pages.login.fields.email", "Email")}
+              disabled={isLoading}
+              style={{ borderRadius: "8px" }}
             />
           </Form.Item>
           <Form.Item
             name="password"
-            label={translate("pages.login.fields.password", "Password")}
+            label={
+              <Typography.Text style={{ color: "white" }}>
+                {translate("pages.login.fields.password", "Password")}
+              </Typography.Text>
+            }
             rules={[
               {
                 required: true,
@@ -226,6 +277,8 @@ export const LoginPage: React.FC<LoginProps> = ({
               autoComplete="current-password"
               placeholder="●●●●●●●●"
               size="large"
+              disabled={isLoading}
+              style={{ borderRadius: "8px" }}
             />
           </Form.Item>
           <div
@@ -240,7 +293,9 @@ export const LoginPage: React.FC<LoginProps> = ({
                 <Checkbox
                   style={{
                     fontSize: "12px",
+                    color: "white",
                   }}
+                  disabled={isLoading}
                 >
                   {translate("pages.login.buttons.rememberMe", "Remember me")}
                 </Checkbox>
@@ -249,7 +304,7 @@ export const LoginPage: React.FC<LoginProps> = ({
             {forgotPasswordLink ?? (
               <ActiveLink
                 style={{
-                  color: token.colorPrimaryTextHover,
+                  color: "#F07522",
                   fontSize: "12px",
                   marginLeft: "auto",
                 }}
@@ -268,8 +323,14 @@ export const LoginPage: React.FC<LoginProps> = ({
                 type="primary"
                 size="large"
                 htmlType="submit"
-                loading={true}
+                loading={isLoading}
                 block
+                style={{ 
+                  borderRadius: "8px",
+                  height: "48px",
+                  backgroundColor: "#F07522",
+                  borderColor: "#F07522"
+                }}
               >
                 {translate("pages.login.signin", "Sign in")}
               </Button>
@@ -282,18 +343,19 @@ export const LoginPage: React.FC<LoginProps> = ({
         <div
           style={{
             marginTop: hideForm ? 16 : 8,
+            textAlign: "center",
           }}
         >
-          <Typography.Text style={{ fontSize: 12 }}>
+          <Typography.Text style={{ fontSize: 12, color: "white" }}>
             {translate(
               "pages.login.buttons.noAccount",
-              "Don’t have an account?"
+              "Don't have an account?"
             )}{" "}
             <ActiveLink
               to="/register"
               style={{
                 fontWeight: "bold",
-                color: token.colorPrimaryTextHover,
+                color: "#F07522",
               }}
             >
               {translate("pages.login.signup", "Sign up")}
@@ -305,27 +367,43 @@ export const LoginPage: React.FC<LoginProps> = ({
   );
 
   return (
-    <Layout style={layoutStyles} {...(wrapperProps ?? {})}>
-      <Row
-        justify="center"
-        align={hideForm ? "top" : "middle"}
-        style={{
-          padding: "16px 0",
-          minHeight: "100dvh",
-          paddingTop: hideForm ? "15dvh" : "16px",
-        }}
-      >
-        <Col xs={22}>
-          {renderContent ? (
-            renderContent(CardContent, PageTitle)
-          ) : (
-            <>
-              {PageTitle}
-              {CardContent}
-            </>
-          )}
-        </Col>
-      </Row>
-    </Layout>
+    <>
+      {isLoading && (
+        <div style={loadingOverlayStyles}>
+          <Space direction="vertical" align="center">
+            <Spin 
+              indicator={<LoadingOutlined style={{ fontSize: 40, color: "#F07522" }} spin />} 
+              size="large"
+            />
+            <Typography.Text style={{ color: "white", marginTop: 16 }}>
+              Signing you in...
+            </Typography.Text>
+          </Space>
+        </div>
+      )}
+      
+      <Layout style={layoutStyles} {...(wrapperProps ?? {})}>
+        <Row
+          justify="center"
+          align={hideForm ? "top" : "middle"}
+          style={{
+            padding: "16px 0",
+            minHeight: "100dvh",
+            paddingTop: hideForm ? "15dvh" : "16px",
+          }}
+        >
+          <Col xs={22} sm={20} md={16} lg={12} xl={10}>
+            {renderContent ? (
+              renderContent(CardContent, PageTitle)
+            ) : (
+              <>
+                {PageTitle}
+                {CardContent}
+              </>
+            )}
+          </Col>
+        </Row>
+      </Layout>
+    </>
   );
 };

@@ -6,9 +6,11 @@ import {
   Configuration,
   EventPayload,
   EventType,
+  InteractionRequiredAuthError,
   PublicClientApplication,
   SilentRequest,
 } from "@azure/msal-browser";
+
 const {
   VITE_AUTH_AZURE_CLIENT_ID: VITE_AUTH_AZURE_CLIENT_ID,
   VITE_AUTH_AZURE_AUTHORITY: VITE_AUTH_AZURE_AUTHORITY,
@@ -40,42 +42,118 @@ const msalConfig: Configuration = {
     authority: VITE_AUTH_AZURE_AUTHORITY,
     redirectUri: VITE_AUTH_AZURE_REDIRECT_URI,
     postLogoutRedirectUri: VITE_AUTH_AZURE_POST_LOGOUT_REDIRECT_URI,
+    navigateToLoginRequestUrl: true,
   },
   cache: {
     cacheLocation: BrowserCacheLocation.LocalStorage,
     storeAuthStateInCookie: true,
     secureCookies: import.meta.env.MODE === "production",
   },
+  system: {
+    loggerOptions: {
+      loggerCallback: (level, message, containsPii) => {
+        if (containsPii) {
+          return;
+        }
+        switch (level) {
+          case 0:
+            console.error(message);
+            return;
+          case 1:
+            console.warn(message);
+            return;
+          case 2:
+            console.info(message);
+            return;
+          case 3:
+            console.debug(message);
+            return;
+          default:
+            console.log(message);
+            return;
+        }
+      },
+      piiLoggingEnabled: false,
+      logLevel: import.meta.env.MODE === "development" ? 3 : 1,
+    },
+    windowHashTimeout: 60000,
+    iframeHashTimeout: 6000,
+    loadFrameTimeout: 0,
+  },
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 
+// Handle redirect promise to catch any errors during redirect login
+msalInstance
+  .handleRedirectPromise()
+  .then((response) => {
+    // Handle successful login
+    if (response) {
+      msalInstance.setActiveAccount(response.account);
+      localStorage.setItem(TOKEN_KEY, response.accessToken);
+    }
+  })
+  .catch((error) => {
+    console.error("Error during redirect handling:", error);
+  });
+
 msalInstance.addEventCallback(async (event) => {
-  console.log(event);
   if (event.eventType === EventType.LOGIN_SUCCESS) {
     const payload: EventPayload = event.payload;
     msalInstance.setActiveAccount(payload as AccountInfo);
 
     const account = msalInstance.getActiveAccount();
-    const request: SilentRequest = {
-      ...tokenRequest,
-      account: account == null ? undefined : account,
-    };
-    try {
-      const response = await msalInstance.acquireTokenSilent(request);
-      localStorage.setItem(TOKEN_KEY, response.accessToken);
-    } catch (e) {
-      msalInstance.acquireTokenPopup(request).then((response) => {
+    if (account) {
+      const request: SilentRequest = {
+        ...tokenRequest,
+        account: account,
+      };
+      try {
+        const response = await msalInstance.acquireTokenSilent(request);
         localStorage.setItem(TOKEN_KEY, response.accessToken);
-      });
+      } catch (e) {
+        if (e instanceof InteractionRequiredAuthError) {
+          // Token expired and requires user interaction
+          try {
+            const response = await msalInstance.acquireTokenPopup(request);
+            localStorage.setItem(TOKEN_KEY, response.accessToken);
+          } catch (popupError) {
+            console.error("Error acquiring token with popup:", popupError);
+          }
+        } else {
+          console.error("Error acquiring token silently:", e);
+        }
+      }
     }
   }
   if (event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
-    localStorage.setItem(
-      TOKEN_KEY,
-      (event.payload as AuthenticationResult).accessToken
-    );
-    msalInstance.setActiveAccount(event.payload as AccountInfo);
+    const authResult = event.payload as AuthenticationResult;
+    localStorage.setItem(TOKEN_KEY, authResult.accessToken);
+    msalInstance.setActiveAccount(authResult.account);
+  }
+  if (event.eventType === EventType.ACQUIRE_TOKEN_FAILURE) {
+    console.error("Token acquisition failed:", event.error);
+    
+    // If the error is due to interaction required, we can try to acquire the token with popup
+    if (event.error instanceof InteractionRequiredAuthError) {
+      const account = msalInstance.getActiveAccount();
+      if (account) {
+        try {
+          const response = await msalInstance.acquireTokenPopup({
+            ...tokenRequest,
+            account: account,
+          });
+          localStorage.setItem(TOKEN_KEY, response.accessToken);
+        } catch (popupError) {
+          console.error("Error acquiring token with popup:", popupError);
+        }
+      }
+    }
+  }
+  if (event.eventType === EventType.LOGOUT_SUCCESS) {
+    localStorage.removeItem(TOKEN_KEY);
+    msalInstance.setActiveAccount(null);
   }
 });
 

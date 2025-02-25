@@ -9,6 +9,8 @@ import { RefineLayoutThemedTitleProps } from "@refinedev/antd";
 import { LogoIcon } from "@/components/ui/logo";
 import { TITLE_APP } from "@/constants";
 
+const { Title } = Typography;
+
 export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({
   collapsed,
   wrapperStyles,
@@ -38,25 +40,34 @@ export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({
       >
         <div
           style={{
-            height: "24px",
-            width: "24px",
-            color: token.colorPrimary,
+            height: "40px",
+            width: "40px",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "10px",
+            background: collapsed ? "white" : "rgba(255, 255, 255, 0.2)",
+            padding: "6px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           }}
         >
           <LogoIcon />
         </div>
 
         {!collapsed && (
-          <Typography.Title
+          <Title
+            level={4}
             style={{
-              fontSize: "inherit",
-              marginBottom: 0,
-              fontWeight: 700,
-              marginLeft: "16px",
+              margin: 0,
+              fontWeight: 600,
+              marginLeft: "12px",
+              color: "white",
+              lineHeight: 1.2,
             }}
           >
             {TITLE_APP}
-          </Typography.Title>
+          </Title>
         )}
       </Space>
     </ActiveLink>

@@ -1,2 +1,2 @@
 export const TOKEN_KEY = "access-token";
-export const TITLE_APP = "TEMPLATE REFINE";
+export const TITLE_APP = "Refine Farm";

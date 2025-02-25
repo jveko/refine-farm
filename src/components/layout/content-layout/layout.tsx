@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Grid, Layout as AntdLayout } from "antd";
+import { Grid, Layout as AntdLayout, theme, Typography } from "antd";
 
 import {
   RefineThemedLayoutV2Props,
@@ -9,6 +9,9 @@ import {
 
 import { SiderContent } from "./sider";
 import { HeaderContent } from "./header";
+
+const { Text } = Typography;
+const { useToken } = theme;
 
 export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
   children,
@@ -22,6 +25,23 @@ export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
   const HeaderToRender = HeaderContent;
   const isSmall = typeof breakpoint.sm === "undefined" ? true : breakpoint.sm;
   const hasSider = !!SiderToRender({ Title });
+  const { token } = useToken();
+
+  // Custom footer component if none provided
+  const DefaultFooter = () => (
+    <AntdLayout.Footer
+      style={{
+        textAlign: "center",
+        backgroundColor: token.colorBgContainer,
+        borderTop: `1px solid ${token.colorBorderSecondary}`,
+        padding: "12px 24px",
+      }}
+    >
+      <Text type="secondary">
+        © {new Date().getFullYear()} Your Company Name. All rights reserved.
+      </Text>
+    </AntdLayout.Footer>
+  );
 
   return (
     <ThemedLayoutContextProvider initialSiderCollapsed={initialSiderCollapsed}>
@@ -29,18 +49,28 @@ export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
         <SiderToRender Title={Title} />
         <AntdLayout>
           <HeaderToRender />
-          <AntdLayout.Content>
+          <AntdLayout.Content
+            style={{
+              backgroundColor: token.colorBgElevated,
+              position: "relative",
+            }}
+          >
             <div
               style={{
                 minHeight: 360,
-                padding: isSmall ? 24 : 12,
+                padding: isSmall ? 24 : 16,
+                margin: 0,
+                backgroundColor: token.colorBgContainer,
+                borderRadius: 0,
+                height: "calc(100vh - 128px)", // Subtract header and footer height
+                overflowY: "auto",
               }}
             >
               {children}
             </div>
             {OffLayoutArea && <OffLayoutArea />}
           </AntdLayout.Content>
-          {Footer && <Footer />}
+          {Footer ? <Footer /> : <DefaultFooter />}
         </AntdLayout>
       </AntdLayout>
     </ThemedLayoutContextProvider>

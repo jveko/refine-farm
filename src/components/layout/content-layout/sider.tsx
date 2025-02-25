@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Drawer, Grid, Layout, Menu, theme } from "antd";
+import { Button, Drawer, Grid, Layout, Menu, theme, Divider, Typography } from "antd";
 import {
   BarsOutlined,
   DashboardOutlined,
@@ -7,6 +7,11 @@ import {
   LogoutOutlined,
   RightOutlined,
   UnorderedListOutlined,
+  AppstoreOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  FileOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import {
   CanAccess,
@@ -27,6 +32,8 @@ import {
 import { RefineThemedLayoutV2SiderProps, useThemedLayoutContext } from "@refinedev/antd";
 import { createStyles } from "antd-style";
 import { TitleContent } from "./title";
+
+const { Text } = Typography;
 
 export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) => {
   const {
@@ -83,6 +90,10 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
             key={key}
             icon={meta?.icon ?? <UnorderedListOutlined />}
             title={meta?.label}
+            style={{
+              fontWeight: 'bold',
+              margin: '4px 0',
+            }}
           >
             {renderTreeView(children, selectedKey)}
           </Menu.SubMenu>
@@ -113,7 +124,16 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
         <Menu.Item
           key={key}
           icon={meta?.icon ?? (isRoute && <UnorderedListOutlined />)}
-          style={linkStyle}
+          style={{
+            ...linkStyle,
+            margin: '4px 0',
+            borderRadius: '6px',
+            ...(isSelected ? {
+              backgroundColor: token.colorPrimaryBg,
+              color: token.colorPrimary,
+              fontWeight: 'bold',
+            } : {})
+          }}
         >
           <Link to={route ?? ""} style={linkStyle}>
             {meta?.label}
@@ -156,20 +176,33 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
     }
   };
 
+  // Enhanced logout item with better styling
   const logout = isExistAuthentication && (
-    <Menu.Item
-      key="logout"
-      onClick={() => handleLogout()}
-      icon={<LogoutOutlined />}
-    >
-      <React.Fragment>
-        {translate("buttons.logout", "Logout")}
-      </React.Fragment>
-    </Menu.Item>
+    <>
+      {!siderCollapsed && <Divider style={{ margin: '8px 0' }} />}
+      <Menu.Item
+        key="logout"
+        onClick={() => handleLogout()}
+        icon={<LogoutOutlined />}
+        style={{ marginTop: siderCollapsed ? '8px' : '0' }}
+      >
+        <React.Fragment>
+          {translate("buttons.logout", "Logout")}
+        </React.Fragment>
+      </Menu.Item>
+    </>
   );
 
+  // Enhanced dashboard item with better styling
   const dashboard = hasDashboard ? (
-    <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
+    <Menu.Item
+      key="dashboard"
+      icon={<DashboardOutlined />}
+      style={{
+        marginBottom: '4px',
+        fontWeight: selectedKey === "/" ? 'bold' : 'normal',
+      }}
+    >
       <Link to="/">{translate("dashboard.title", "Dashboard")}</Link>
       {!siderCollapsed && selectedKey === "/" && (
         <div className="ant-menu-tree-arrow" />
@@ -177,8 +210,12 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
     </Menu.Item>
   ) : null;
 
+  // No user profile section at the bottom
+  const userProfile = null;
+
   const items = renderTreeView(menuItems, selectedKey);
 
+  // Group menu items by category for better organization
   const renderSider = () => {
     if (render) {
       return render({
@@ -188,10 +225,20 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
         collapsed: siderCollapsed,
       });
     }
+    
+    // Add category headers for better organization
     return (
       <>
         {dashboard}
-        {items.map((item, i) => (<React.Fragment key={i}>{item}</React.Fragment>))}
+        
+        {!siderCollapsed && (
+          <Menu.ItemGroup key="main-group" title="MAIN MENU">
+            {items.map((item, i) => (<React.Fragment key={i}>{item}</React.Fragment>))}
+          </Menu.ItemGroup>
+        )}
+        
+        {siderCollapsed && items.map((item, i) => (<React.Fragment key={i}>{item}</React.Fragment>))}
+        
         {logout}
       </>
     );
@@ -205,13 +252,17 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
         mode="inline"
         style={{
           paddingTop: "8px",
+          paddingLeft: "8px",
+          paddingRight: "8px",
           border: "none",
           overflow: "auto",
-          height: "calc(100% - 72px)",
+          height: `calc(100% - 72px)`,
+          backgroundColor: token.colorBgContainer,
         }}
         onClick={() => {
           setMobileSiderOpen(false);
         }}
+        theme="dark"
       >
         {renderSider()}
       </Menu>
@@ -248,27 +299,23 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
                   justifyContent: "flex-start",
                   alignItems: "center",
                   height: "64px",
-                  backgroundColor: token.colorBgElevated,
+                  backgroundColor: token.colorPrimary,
+                  color: token.colorTextLightSolid,
                 }}
               >
                 <RenderToTitle collapsed={false} />
               </div>
               {renderMenu()}
+              {userProfile}
             </Layout.Sider>
           </Layout>
         </Drawer>
         <Button
           className={styles.drawerButton}
-          // style={{
-          //   borderTopLeftRadius: 0,
-          //   borderBottomLeftRadius: 0,
-          //   position: "fixed",
-          //   top: 64,
-          //   zIndex: 999,
-          // }}
           size="large"
           onClick={() => setMobileSiderOpen(true)}
           icon={<BarsOutlined />}
+          type="primary"
         />
       </>
     );
@@ -280,7 +327,9 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
 
   const siderStyles: React.CSSProperties = {
     backgroundColor: token.colorBgContainer,
-    borderRight: `1px solid ${token.colorBgElevated}`,
+    borderRight: `1px solid ${token.colorBorderSecondary}`,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    background: token.colorBgLayout,
   };
 
   if (fixed) {
@@ -346,19 +395,21 @@ export const SiderContent: React.FC<RefineThemedLayoutV2SiderProps> = (props) =>
             justifyContent: "center",
             alignItems: "center",
             height: "64px",
-            backgroundColor: token.colorBgElevated,
+            backgroundColor: token.colorPrimary,
+            color: token.colorTextLightSolid,
             fontSize: "14px",
           }}
         >
           <RenderToTitle collapsed={siderCollapsed} />
         </div>
         {renderMenu()}
+        {userProfile}
       </Layout.Sider>
     </>
   );
 };
 
-const useStyles = createStyles(() => {
+const useStyles = createStyles(({ token }) => {
   return {
     drawerButton: {
       borderTopLeftRadius: 0,
@@ -366,6 +417,7 @@ const useStyles = createStyles(() => {
       position: "fixed",
       top: 64,
       zIndex: 999,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
     },
   };
 });
