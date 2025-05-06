@@ -1,4 +1,4 @@
- /**
+/**
  * Tob Insurance Color System
  *
  * This file defines the color palette for Tob Insurance web applications
