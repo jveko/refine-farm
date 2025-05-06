@@ -1,29 +1,18 @@
-import React from "react";
-import {
-  useRouterContext,
-  useRouterType,
-  useLink,
-} from "@refinedev/core";
-import { Typography, theme, Space } from "antd";
-import { RefineLayoutThemedTitleProps } from "@refinedev/antd";
-import { LogoIcon } from "@/components/ui/logo";
-import { TITLE_APP } from "@/constants";
+import { LogoIcon } from "@/components/ui/logo"
+import { TITLE_APP } from "@/constants"
+import type { RefineLayoutThemedTitleProps } from "@refinedev/antd"
+import { useLink, useRouterContext, useRouterType } from "@refinedev/core"
+import { Space, Typography, theme } from "antd"
+import type React from "react"
 
-const { Title } = Typography;
+const { Title } = Typography
 
-export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({
-  collapsed,
-  wrapperStyles,
-}) => {
-  const { token } = theme.useToken();
-  const routerType = useRouterType();
-  const Link = useLink();
-  const { Link: LegacyLink } = useRouterContext();
-
-  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
+export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({ collapsed, wrapperStyles }) => {
+  const { token } = theme.useToken()
+  const Link = useLink()
 
   return (
-    <ActiveLink
+    <Link
       to="/"
       style={{
         display: "inline-block",
@@ -46,10 +35,11 @@ export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: "10px",
-            background: collapsed ? "white" : "rgba(255, 255, 255, 0.2)",
+            borderRadius: "12px",
+            background: collapsed ? "white" : "rgba(255, 255, 255, 0.25)",
             padding: "6px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            transition: "all 0.3s",
           }}
         >
           <LogoIcon />
@@ -60,16 +50,17 @@ export const TitleContent: React.FC<RefineLayoutThemedTitleProps> = ({
             level={4}
             style={{
               margin: 0,
-              fontWeight: 600,
+              fontWeight: 700,
               marginLeft: "12px",
               color: "white",
               lineHeight: 1.2,
+              textShadow: "0 1px 2px rgba(0,0,0,0.1)",
             }}
           >
             {TITLE_APP}
           </Title>
         )}
       </Space>
-    </ActiveLink>
-  );
-};
+    </Link>
+  )
+}

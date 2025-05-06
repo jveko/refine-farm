@@ -1,2 +1,2 @@
-export * from "./form";
-export * from "./useCooperationAgreementTypeForm";
+export * from "./form"
+export * from "./useCooperationAgreementTypeForm"

@@ -1,6 +1,5 @@
-import React from "react";
+import type React from "react"
 
-import { Button, Card, CardProps, Space, SpaceProps, Spin } from "antd";
 import {
   useBack,
   useGo,
@@ -10,8 +9,10 @@ import {
   useResource,
   useRouterType,
   useToPath,
-} from "@refinedev/core";
+} from "@refinedev/core"
+import { Button, Card, type CardProps, Space, type SpaceProps, Spin } from "antd"
 
+import { ArrowLeftOutlined } from "@ant-design/icons"
 import {
   AutoSaveIndicator,
   DeleteButton,
@@ -22,9 +23,8 @@ import {
   type RefreshButtonProps,
   SaveButton,
   type SaveButtonProps,
-} from "@refinedev/antd";
-import { RefineCrudEditProps } from "@refinedev/ui-types";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+} from "@refinedev/antd"
+import type { RefineCrudEditProps } from "@refinedev/ui-types"
 
 type EditProps = RefineCrudEditProps<
   SaveButtonProps,
@@ -37,7 +37,7 @@ type EditProps = RefineCrudEditProps<
   object,
   RefreshButtonProps,
   ListButtonProps
->;
+>
 /**
  * `<Edit>` provides us a layout for displaying the page.
  * It does not contain any logic but adds extra functionalities like a refresh button.
@@ -66,76 +66,68 @@ export const RefineEdit: React.FC<EditProps> = ({
   goBack: goBackFromProps,
   autoSaveProps,
 }) => {
-  const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext();
-  const { mutationMode: mutationModeContext } = useMutationMode();
-  const mutationMode = mutationModeProp ?? mutationModeContext;
-
-  const routerType = useRouterType();
-  const back = useBack();
-  const go = useGo();
-  const { goBack, list: legacyGoList } = useNavigation();
-
   const {
-    resource,
-    action,
-    id: idFromParams,
-    identifier,
-  } = useResource(resourceFromProps);
+    options: { breadcrumb: globalBreadcrumb } = {},
+  } = useRefineContext()
+  const { mutationMode: mutationModeContext } = useMutationMode()
+  const mutationMode = mutationModeProp ?? mutationModeContext
+
+  const routerType = useRouterType()
+  const back = useBack()
+  const go = useGo()
+  const { goBack, list: legacyGoList } = useNavigation()
+
+  const { resource, action, id: idFromParams, identifier } = useResource(resourceFromProps)
 
   const goListPath = useToPath({
     resource,
     action: "list",
-  });
+  })
 
-  const id = recordItemId ?? idFromParams;
+  const id = recordItemId ?? idFromParams
 
-  const breadcrumb =
-    typeof breadcrumbFromProps === "undefined"
-      ? globalBreadcrumb
-      : breadcrumbFromProps;
+  const breadcrumb = typeof breadcrumbFromProps === "undefined" ? globalBreadcrumb : breadcrumbFromProps
 
-  const hasList = resource?.list && !recordItemId;
+  const hasList = resource?.list && !recordItemId
   const isDeleteButtonVisible =
-    canDelete ??
-    ((resource?.meta?.canDelete ?? resource?.canDelete) ||
-      deleteButtonPropsFromProps);
+    canDelete ?? ((resource?.meta?.canDelete ?? resource?.canDelete) || deleteButtonPropsFromProps)
 
   const listButtonProps: ListButtonProps | undefined = hasList
     ? {
-      ...(isLoading ? { disabled: true } : {}),
-      resource: routerType === "legacy" ? resource?.route : identifier,
-    }
-    : undefined;
+        ...(isLoading ? { disabled: true } : {}),
+        resource: routerType === "legacy" ? resource?.route : identifier,
+      }
+    : undefined
 
   const refreshButtonProps: RefreshButtonProps = {
     ...(isLoading ? { disabled: true } : {}),
     resource: routerType === "legacy" ? resource?.route : identifier,
     recordItemId: id,
     dataProviderName,
-  };
+  }
 
   const deleteButtonProps: DeleteButtonProps | undefined = isDeleteButtonVisible
     ? {
-      ...(isLoading ? { disabled: true } : {}),
-      resource: routerType === "legacy" ? resource?.route : identifier,
-      mutationMode,
-      onSuccess: () => {
-        if (routerType === "legacy") {
-          legacyGoList(resource?.route ?? resource?.name ?? "");
-        } else {
-          go({ to: goListPath });
-        }
-      },
-      recordItemId: id,
-      dataProviderName,
-      ...deleteButtonPropsFromProps,
-    }
-    : undefined;
+        ...(isLoading ? { disabled: true } : {}),
+        resource: routerType === "legacy" ? resource?.route : identifier,
+        mutationMode,
+        onSuccess: () => {
+          if (routerType === "legacy") {
+            legacyGoList(resource?.route ?? resource?.name ?? "")
+          } else {
+            go({ to: goListPath })
+          }
+        },
+        recordItemId: id,
+        dataProviderName,
+        ...deleteButtonPropsFromProps,
+      }
+    : undefined
 
   const saveButtonProps: SaveButtonProps = {
     ...(isLoading ? { disabled: true } : {}),
     ...saveButtonPropsFromProps,
-  };
+  }
 
   const defaultHeaderButtons = (
     <>
@@ -143,14 +135,14 @@ export const RefineEdit: React.FC<EditProps> = ({
       {hasList && <ListButton {...listButtonProps} />}
       <RefreshButton {...refreshButtonProps} />
     </>
-  );
+  )
 
   const defaultFooterButtons = (
     <>
       {isDeleteButtonVisible && <DeleteButton {...deleteButtonProps} />}
       <SaveButton {...saveButtonProps} />
     </>
-  );
+  )
 
   return (
     <div style={{ marginBottom: "12px" }} {...(wrapperProps ?? {})}>
@@ -192,10 +184,10 @@ export const RefineEdit: React.FC<EditProps> = ({
             {headerButtons
               ? typeof headerButtons === "function"
                 ? headerButtons({
-                  defaultButtons: defaultHeaderButtons,
-                  listButtonProps,
-                  refreshButtonProps,
-                })
+                    defaultButtons: defaultHeaderButtons,
+                    listButtonProps,
+                    refreshButtonProps,
+                  })
                 : headerButtons
               : defaultHeaderButtons}
           </Space>
@@ -214,10 +206,10 @@ export const RefineEdit: React.FC<EditProps> = ({
             {footerButtons
               ? typeof footerButtons === "function"
                 ? footerButtons({
-                  defaultButtons: defaultFooterButtons,
-                  deleteButtonProps,
-                  saveButtonProps,
-                })
+                    defaultButtons: defaultFooterButtons,
+                    deleteButtonProps,
+                    saveButtonProps,
+                  })
                 : footerButtons
               : defaultFooterButtons}
           </Space>,
@@ -228,5 +220,5 @@ export const RefineEdit: React.FC<EditProps> = ({
         </Spin>
       </Card>
     </div>
-  );
-};
+  )
+}

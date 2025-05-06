@@ -1,15 +1,14 @@
-import { themeConfig, GlobalStyle } from "@/config/antd";
-import { ContentLayout } from "../components/layout";
-import { Authenticated, ErrorComponent } from "@refinedev/core";
-import { ConfigProvider } from "antd";
-import { Outlet, RouteObject } from "react-router";
+import { themeConfig } from "@/config/antd"
+import { Authenticated, ErrorComponent } from "@refinedev/core"
+import { ConfigProvider } from "antd"
+import { Outlet, type RouteObject } from "react-router"
+import { ContentLayout } from "../components/layout"
 
 export const ErrorRoutes: RouteObject[] = [
   {
     element: (
       <Authenticated key="catch-all" v3LegacyAuthProviderCompatible={false}>
         <ConfigProvider theme={themeConfig}>
-          <GlobalStyle />
           <ContentLayout>
             <Outlet />
           </ContentLayout>
@@ -22,5 +21,5 @@ export const ErrorRoutes: RouteObject[] = [
         element: <ErrorComponent />,
       },
     ],
-  }
-];
+  },
+]

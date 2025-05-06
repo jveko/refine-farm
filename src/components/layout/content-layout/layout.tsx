@@ -1,17 +1,13 @@
-"use client";
-import React from "react";
-import { Grid, Layout as AntdLayout, theme, Typography } from "antd";
+import { Layout as AntdLayout, Grid, Typography, theme } from "antd"
+import type React from "react"
 
-import {
-  RefineThemedLayoutV2Props,
-  ThemedLayoutContextProvider,
-} from "@refinedev/antd";
+import { type RefineThemedLayoutV2Props, ThemedLayoutContextProvider } from "@refinedev/antd"
 
-import { SiderContent } from "./sider";
-import { HeaderContent } from "./header";
+import { HeaderContent } from "./header"
+import { SiderContent } from "./sider"
 
-const { Text } = Typography;
-const { useToken } = theme;
+const { Text } = Typography
+const { useToken } = theme
 
 export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
   children,
@@ -20,14 +16,13 @@ export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
   OffLayoutArea,
   initialSiderCollapsed,
 }) => {
-  const breakpoint = Grid.useBreakpoint();
-  const SiderToRender = SiderContent;
-  const HeaderToRender = HeaderContent;
-  const isSmall = typeof breakpoint.sm === "undefined" ? true : breakpoint.sm;
-  const hasSider = !!SiderToRender({ Title });
-  const { token } = useToken();
+  const breakpoint = Grid.useBreakpoint()
+  const SiderToRender = SiderContent
+  const HeaderToRender = HeaderContent
+  const isSmall = typeof breakpoint.sm === "undefined" ? true : breakpoint.sm
+  const hasSider = !!SiderToRender({ Title })
+  const { token } = useToken()
 
-  // Custom footer component if none provided
   const DefaultFooter = () => (
     <AntdLayout.Footer
       style={{
@@ -35,34 +30,34 @@ export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
         backgroundColor: token.colorBgContainer,
         borderTop: `1px solid ${token.colorBorderSecondary}`,
         padding: "12px 24px",
+        fontSize: "14px",
+        color: token.colorTextSecondary,
       }}
     >
-      <Text type="secondary">
-        © {new Date().getFullYear()} Your Company Name. All rights reserved.
-      </Text>
+      <Text type="secondary">© {new Date().getFullYear()} Tob Insurance. All rights reserved.</Text>
     </AntdLayout.Footer>
-  );
+  )
 
   return (
     <ThemedLayoutContextProvider initialSiderCollapsed={initialSiderCollapsed}>
-      <AntdLayout style={{ minHeight: "100vh" }} hasSider={hasSider}>
+      <AntdLayout style={{ minHeight: "100vh", background: token.colorBgLayout }} hasSider={hasSider}>
         <SiderToRender Title={Title} />
         <AntdLayout>
           <HeaderToRender />
           <AntdLayout.Content
             style={{
-              backgroundColor: token.colorBgElevated,
               position: "relative",
+              background: token.colorBgContainer,
+              margin: isSmall ? "16px" : "24px",
+              borderRadius: token.borderRadiusLG,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              overflow: "hidden",
             }}
           >
             <div
               style={{
                 minHeight: 360,
-                padding: isSmall ? 24 : 16,
-                margin: 0,
-                backgroundColor: token.colorBgContainer,
-                borderRadius: 0,
-                height: "calc(100vh - 128px)", // Subtract header and footer height
+                height: isSmall ? "calc(100vh - 145px)" : "calc(100vh - 136px)",
                 overflowY: "auto",
               }}
             >
@@ -70,9 +65,9 @@ export const ContentLayout: React.FC<RefineThemedLayoutV2Props> = ({
             </div>
             {OffLayoutArea && <OffLayoutArea />}
           </AntdLayout.Content>
-          {Footer ? <Footer /> : <DefaultFooter />}
+          {isSmall && (Footer ? <Footer /> : <DefaultFooter />)}
         </AntdLayout>
       </AntdLayout>
     </ThemedLayoutContextProvider>
-  );
-};
+  )
+}

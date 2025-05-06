@@ -1,11 +1,11 @@
-import { defineConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { VitePWA } from "vite-plugin-pwa";
+import path from "path"
+import react from "@vitejs/plugin-react"
+import { defineConfig, loadEnv } from "vite"
+import { VitePWA } from "vite-plugin-pwa"
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
-  const isProd = mode === 'production';
+  const env = loadEnv(mode, process.cwd())
+  const isProd = mode === "production"
 
   return {
     root: "",
@@ -14,24 +14,20 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       sourcemap: !isProd,
       minify: isProd,
-      // Optimize build
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router', '@refinedev/core'],
-            antd: ['antd', '@ant-design/icons'],
-            msal: ['@azure/msal-browser', '@azure/msal-react'],
+            vendor: ["react", "react-dom", "react-router", "@refinedev/core"],
+            antd: ["antd", "@ant-design/icons"],
+            msal: ["@azure/msal-browser", "@azure/msal-react"],
           },
         },
       },
-      // Reduce chunk size warnings
       chunkSizeWarningLimit: 1000,
     },
     server: {
       port: 3000,
-      // Enable CORS
       cors: true,
-      // Hot module replacement
       hmr: {
         overlay: true,
       },
@@ -47,7 +43,7 @@ export default defineConfig(({ mode }) => {
     },
     // Optimize dependencies
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router', 'antd', '@refinedev/core'],
+      include: ["react", "react-dom", "react-router", "antd", "@refinedev/core"],
       exclude: [],
     },
     plugins: [
@@ -72,74 +68,74 @@ export default defineConfig(({ mode }) => {
               src: "/pwa-192x192.png",
               sizes: "192x192",
               type: "image/png",
-              purpose: "any maskable"
+              purpose: "any maskable",
             },
             {
               src: "/pwa-512x512.png", // This should be a 512x512 icon
               sizes: "512x512",
               type: "image/png",
-              purpose: "any maskable"
+              purpose: "any maskable",
             },
           ],
         },
         // Workbox configuration
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg}'],
+          globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg}"],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-              handler: 'CacheFirst',
+              handler: "CacheFirst",
               options: {
-                cacheName: 'google-fonts-cache',
+                cacheName: "google-fonts-cache",
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
+                  statuses: [0, 200],
+                },
+              },
             },
             {
               urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-              handler: 'CacheFirst',
+              handler: "CacheFirst",
               options: {
-                cacheName: 'gstatic-fonts-cache',
+                cacheName: "gstatic-fonts-cache",
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
+                  statuses: [0, 200],
+                },
+              },
             },
             {
               urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif)$/,
-              handler: 'CacheFirst',
+              handler: "CacheFirst",
               options: {
-                cacheName: 'images-cache',
+                cacheName: "images-cache",
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-                }
-              }
+                  maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                },
+              },
             },
             {
               urlPattern: /^https:\/\/.*api.*$/i,
-              handler: 'NetworkFirst',
+              handler: "NetworkFirst",
               options: {
-                cacheName: 'api-cache',
+                cacheName: "api-cache",
                 expiration: {
                   maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 // 1 hour
+                  maxAgeSeconds: 60 * 60, // 1 hour
                 },
-                networkTimeoutSeconds: 10
-              }
-            }
-          ]
-        }
+                networkTimeoutSeconds: 10,
+              },
+            },
+          ],
+        },
       }),
     ],
-  };
-});
+  }
+})

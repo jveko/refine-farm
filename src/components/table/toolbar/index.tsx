@@ -1,28 +1,14 @@
-import { Button, Col, Form, Input, Row, Space, Tooltip } from "antd";
-import React, { PropsWithChildren, useState } from "react";
-import { useTableToolbar } from "@/hooks/table-toolbar";
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import type { useTableToolbar } from "@/hooks/table-toolbar"
+import { ArrowDownOutlined, ArrowUpOutlined, SearchOutlined } from "@ant-design/icons"
+import { Button, Col, Form, Input, Row, Space, Tooltip } from "antd"
+import React, { type PropsWithChildren, useState } from "react"
 
 type Props<T extends object> = ReturnType<typeof useTableToolbar<T>> & {
-  children: React.ReactNode;
-};
-export const TableToolbar = <T extends object>(
-  props: PropsWithChildren<Props<T>>
-) => {
-  const {
-    search,
-    activeFilter,
-    activeSorter,
-    resetFilter,
-    resetSorter,
-    searchFormProps,
-    refSearchButton,
-  } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  children: React.ReactNode
+}
+export const TableToolbar = <T extends object>(props: PropsWithChildren<Props<T>>) => {
+  const { search, activeFilter, activeSorter, resetFilter, resetSorter, searchFormProps, refSearchButton } = props
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <Row
       style={{
@@ -70,7 +56,7 @@ export const TableToolbar = <T extends object>(
               <Button
                 type={"link"}
                 onClick={() => {
-                  setIsOpen(!isOpen);
+                  setIsOpen(!isOpen)
                 }}
                 style={{
                   color: "#185FA3",
@@ -83,12 +69,7 @@ export const TableToolbar = <T extends object>(
                   placeholder={"Search"}
                   onPressEnter={search}
                   enterButton={
-                    <Button
-                      ref={refSearchButton}
-                      icon={<SearchOutlined />}
-                      htmlType={"submit"}
-                      type={"primary"}
-                    />
+                    <Button ref={refSearchButton} icon={<SearchOutlined />} htmlType={"submit"} type={"primary"} />
                   }
                 />
               </Form.Item>
@@ -108,5 +89,5 @@ export const TableToolbar = <T extends object>(
         </Row>
       </Col>
     </Row>
-  );
-};
+  )
+}

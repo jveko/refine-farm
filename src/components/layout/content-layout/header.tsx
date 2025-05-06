@@ -1,75 +1,67 @@
-"use client";
-
-import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
+import { BellOutlined, LogoutOutlined, QuestionCircleOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons"
+import type { IUser } from "@interfaces"
+import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd"
+import { useThemedLayoutContext } from "@refinedev/antd"
+import { useGetIdentity, useLogout, useRouterContext, useTitle } from "@refinedev/core"
 import {
+  Layout as AntdLayout,
   Avatar,
   Badge,
   Breadcrumb,
-  Dropdown,
-  Layout as AntdLayout,
-  Space,
-  theme,
-  Typography,
-  Divider,
   Button,
-} from "antd";
-import React from "react";
-import {
-  BellOutlined,
-  UserOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { useLogout, useRouterContext, useTitle } from "@refinedev/core";
-import { useThemedLayoutContext } from "@refinedev/antd";
+  Divider,
+  Dropdown,
+  type MenuProps,
+  Space,
+  Typography,
+  theme,
+} from "antd"
+import type React from "react"
 
-const { Text } = Typography;
-const { useToken } = theme;
+const { Text } = Typography
+const { useToken } = theme
+type MenuItem = Required<MenuProps>["items"][number]
 
-export const HeaderContent: React.FC<RefineThemedLayoutV2HeaderProps> = ({
-  sticky = true,
-}) => {
-  const { token } = useToken();
-  const { siderCollapsed } = useThemedLayoutContext();
-  const Title = useTitle();
-  const { Link } = useRouterContext();
-  const { mutate: mutateLogout } = useLogout();
-
-  // Mock user data - replace with actual user data in production
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: null,
-  };
+export const HeaderContent: React.FC<RefineThemedLayoutV2HeaderProps> = ({ sticky = true }) => {
+  const { token } = useToken()
+  const { siderCollapsed } = useThemedLayoutContext()
+  const Title = useTitle()
+  const { mutate: logout } = useLogout()
+  const { data: user } = useGetIdentity<IUser>()
 
   const headerStyles: React.CSSProperties = {
-    backgroundColor: token.colorBgElevated,
+    backgroundColor: token.colorBgContainer,
     display: "flex",
-    justifyContent: "space-between", // Changed to space-between for better layout
+    justifyContent: "space-between",
     alignItems: "center",
-    padding: "0px 24px",
+    padding: "0 24px",
     height: "64px",
     boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-  };
+    borderBottom: `1px solid ${token.colorBorderSecondary}`,
+  }
 
   if (sticky) {
-    headerStyles.position = "sticky";
-    headerStyles.top = 0;
-    headerStyles.zIndex = 1;
+    headerStyles.position = "sticky"
+    headerStyles.top = 0
+    headerStyles.zIndex = 1
   }
 
   // User dropdown menu items
-  const userMenuItems = [
+  const userMenuItems: MenuItem[] = [
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: "Profile",
+      label: "My Profile",
     },
     {
       key: "settings",
       icon: <SettingOutlined />,
       label: "Settings",
+    },
+    {
+      key: "help",
+      icon: <QuestionCircleOutlined />,
+      label: "Help & Support",
     },
     {
       type: "divider" as const,
@@ -78,61 +70,78 @@ export const HeaderContent: React.FC<RefineThemedLayoutV2HeaderProps> = ({
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: () => mutateLogout(),
+      onClick: () =>
+        logout({
+          redirectPath: "/login?isLoggedOut=true",
+        }),
     },
-  ];
+  ]
 
   return (
     <AntdLayout.Header style={headerStyles}>
-      {/* Left side: Page title or empty space */}
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <Text strong style={{ fontSize: '16px' }}>
-          {typeof Title === 'function' ? "Dashboard" : "Dashboard"}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          background: token.colorPrimaryBg,
+          padding: "6px 12px",
+          borderRadius: token.borderRadiusLG,
+        }}
+      >
+        <Text
+          strong
+          style={{
+            fontSize: "16px",
+            color: token.colorPrimary,
+          }}
+        >
+          {typeof Title === "function" ? "Dashboard" : "Dashboard"}
         </Text>
       </div>
 
-      {/* Right side: Notifications, Help, and User Profile */}
       <Space size="middle">
-        <Button
-          type="text"
-          icon={<QuestionCircleOutlined style={{ fontSize: '18px' }} />}
-          aria-label="Help"
-        />
-        
-        <Badge count={3} dot>
+        <Badge count={5} size="small">
           <Button
             type="text"
-            icon={<BellOutlined style={{ fontSize: '18px' }} />}
-            aria-label="Notifications"
+            icon={<BellOutlined style={{ fontSize: "18px" }} />}
+            size="large"
+            shape="circle"
+            style={{
+              background: token.colorBgContainer,
+              border: `1px solid ${token.colorBorderSecondary}`,
+            }}
           />
         </Badge>
-        
-        <Divider type="vertical" style={{ height: '24px', margin: '0 8px' }} />
-        
+
+        <Divider type="vertical" style={{ height: "28px", margin: "0 4px" }} />
+
         <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
           <Space style={{ cursor: "pointer" }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: token.colorBgContainer,
-              padding: '4px 12px 4px 4px',
-              borderRadius: '50px',
-              border: `1px solid ${token.colorBorderSecondary}`,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                background: token.colorBgContainer,
+                padding: "4px 12px 4px 4px",
+                borderRadius: "50px",
+                border: `1px solid ${token.colorBorderSecondary}`,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                transition: "all 0.2s",
+              }}
+            >
               <Avatar
                 size="default"
                 icon={<UserOutlined />}
                 style={{
                   backgroundColor: token.colorPrimary,
-                  marginRight: '8px'
+                  marginRight: "8px",
                 }}
               />
-              <Text strong>{user.name}</Text>
+              <Text strong>{user?.name?.split(" ")[0] || "User"}</Text>
             </div>
           </Space>
         </Dropdown>
       </Space>
     </AntdLayout.Header>
-  );
-};
+  )
+}

@@ -1,16 +1,16 @@
-import { IDepartmentOption } from "@/interfaces";
-import { useSelect } from "@refinedev/antd";
-import { Col, Form, Input, Row, Segmented, Select, Spin } from "antd";
-import { useCooperationAgreementTypeForm } from "./useCooperationAgreementTypeForm";
-import { createStyles } from "antd-style";
+import type { IDepartmentOption } from "@/interfaces"
+import { useSelect } from "@refinedev/antd"
+import { Col, Form, Input, Row, Segmented, Select, Spin } from "antd"
+import { createStyles } from "antd-style"
+import type { useCooperationAgreementTypeForm } from "./useCooperationAgreementTypeForm"
 
 type Props = {
-  form: ReturnType<typeof useCooperationAgreementTypeForm>;
-};
+  form: ReturnType<typeof useCooperationAgreementTypeForm>
+}
 
 export const CooperationAgreementTypeForm = (props: Props) => {
-  const { styles } = useStyles();
-  const { formProps, formLoading, action } = props.form;
+  const { styles } = useStyles()
+  const { formProps, formLoading, action } = props.form
   const { selectProps: departmentSelectProps } = useSelect<IDepartmentOption>({
     resource: "department/option",
     sorters: [
@@ -29,7 +29,7 @@ export const CooperationAgreementTypeForm = (props: Props) => {
     ],
     optionLabel: "name",
     optionValue: "id",
-  });
+  })
 
   return (
     <>
@@ -61,11 +61,7 @@ export const CooperationAgreementTypeForm = (props: Props) => {
                   },
                 ]}
               >
-                <Select
-                  {...departmentSelectProps}
-                  allowClear
-                  disabled={action == "edit"}
-                />
+                <Select {...departmentSelectProps} allowClear disabled={action == "edit"} />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
@@ -112,8 +108,8 @@ export const CooperationAgreementTypeForm = (props: Props) => {
         </Form>
       </Spin>
     </>
-  );
-};
+  )
+}
 const useStyles = createStyles(({ token }) => {
   return {
     formItem: {
@@ -122,5 +118,5 @@ const useStyles = createStyles(({ token }) => {
       margin: 0,
       borderBottom: `1px solid ${token.colorBorderSecondary}`,
     },
-  };
-});
+  }
+})

@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: true
+  commands:
+    check:
+      run: bun run check --fix --no-errors-on-unmatched
+      stage_fixed: true
+    typecheck:
+      run: bun run typecheck
+    unused-code:
+      run: bun run check:unused

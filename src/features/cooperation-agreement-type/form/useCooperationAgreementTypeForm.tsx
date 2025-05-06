@@ -1,23 +1,16 @@
-import { ICooperationAgreementType, ICooperationAgreementTypeForm, IResponseMutation, } from "@/interfaces";
-import { BaseKey, HttpError, UseFormProps } from "@refinedev/core";
-import { useForm } from "@refinedev/antd";
-import { notificationError } from "@/utils/notificationError";
+import type { ICooperationAgreementType, ICooperationAgreementTypeForm, IResponseMutation } from "@/interfaces"
+import { notificationError } from "@/utils/notificationError"
+import { useForm } from "@refinedev/antd"
+import type { BaseKey, HttpError, UseFormProps } from "@refinedev/core"
 
-type TQueryFnData = ICooperationAgreementType;
-type TError = HttpError;
-type TVariables = ICooperationAgreementTypeForm;
-type TResponse = IResponseMutation;
+type TQueryFnData = ICooperationAgreementType
+type TError = HttpError
+type TVariables = ICooperationAgreementTypeForm
+type TResponse = IResponseMutation
 type Props = {
-  companyRegulationTypeId?: number;
-  recordItemId?: BaseKey;
-} & UseFormProps<
-  TQueryFnData,
-  TError,
-  TVariables,
-  TQueryFnData,
-  TResponse,
-  TError
->;
+  companyRegulationTypeId?: number
+  recordItemId?: BaseKey
+} & UseFormProps<TQueryFnData, TError, TVariables, TQueryFnData, TResponse, TError>
 
 export const useCooperationAgreementTypeForm = (props: Props) => {
   const resource = "cooperation-agreement-type"
@@ -32,14 +25,14 @@ export const useCooperationAgreementTypeForm = (props: Props) => {
         description: "Operation Successful",
         message: "Cooperation Agreement Type has been successfully created",
         type: "success",
-      };
+      }
     },
     errorNotification: notificationError,
-  });
+  })
   return {
     ...form,
     resource,
     action: props.action,
     recordItemId: props.recordItemId,
-  };
-};
+  }
+}

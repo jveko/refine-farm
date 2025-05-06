@@ -1,40 +1,22 @@
-import { themeConfig, GlobalStyle } from "@/config";
-import { ContentLayout } from "@/components/layout";
-import { DashboardPage } from "@/pages/dashboard";
-import { Authenticated } from "@refinedev/core";
-import { CatchAllNavigate } from "@refinedev/react-router";
-import { ConfigProvider } from "antd";
-import { Outlet, RouteObject } from "react-router";
-import { cooperationAgreementTypeRouter } from "@/pages/cooperation-agreement-type";
-import { FullScreenLoading } from "@/components/ui/loading";
-import { useEffect, useState } from "react";
+import { ContentLayout } from "@/components/layout"
+import { FullScreenLoading } from "@/components/ui/loading"
+import { themeConfig } from "@/config"
+import { cooperationAgreementTypeRouter } from "@/pages/cooperation-agreement-type"
+import { DashboardPage } from "@/pages/dashboard"
+import { Authenticated } from "@refinedev/core"
+import { CatchAllNavigate } from "@refinedev/react-router"
+import { ConfigProvider } from "antd"
+import { Outlet, type RouteObject } from "react-router"
 
-// Component to handle authenticated routes with loading state
 const AuthenticatedLayout = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Simulate a short loading time for better UX
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  if (isLoading) {
-    return <FullScreenLoading message="Loading your dashboard..." />;
-  }
-  
   return (
     <ConfigProvider theme={themeConfig}>
-      <GlobalStyle />
       <ContentLayout>
         <Outlet />
       </ContentLayout>
     </ConfigProvider>
-  );
-};
+  )
+}
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -54,7 +36,12 @@ export const ProtectedRoutes: RouteObject[] = [
         index: true,
         element: <DashboardPage />,
       },
+      {
+        path: "/sadasd",
+        index: true,
+        element: <DashboardPage />,
+      },
       ...cooperationAgreementTypeRouter,
     ],
-  }
-];
+  },
+]

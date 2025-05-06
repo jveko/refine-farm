@@ -1,25 +1,25 @@
-import React, { FC, useState } from "react";
-import { CanAccessProps } from "@refinedev/core";
-import { CanAccess, useGo, useNavigation, useRouterType, useTranslate } from "@refinedev/core";
-import { Button, Result, Space, Tooltip, Typography } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons"
+import type { CanAccessProps } from "@refinedev/core"
+import { CanAccess, useGo, useNavigation, useRouterType, useTranslate } from "@refinedev/core"
+import { Button, Result, Space, Tooltip, Typography } from "antd"
+import React, { type FC, useState } from "react"
 
-type CanAccessRouteProps = CanAccessProps;
+type CanAccessRouteProps = CanAccessProps
 export const CanAccessRoute: FC<CanAccessRouteProps> = (props: CanAccessRouteProps) => {
-  const { ...rest } = props;
+  const { ...rest } = props
   return (
     <CanAccess {...rest} fallback={<FallBack />}>
       {props.children}
     </CanAccess>
-  );
+  )
 }
 
 const FallBack = () => {
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const translate = useTranslate();
-  const { push } = useNavigation();
-  const go = useGo();
-  const routerType = useRouterType();
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const translate = useTranslate()
+  const { push } = useNavigation()
+  const go = useGo()
+  const routerType = useRouterType()
   return (
     <Result
       status="403"
@@ -27,9 +27,7 @@ const FallBack = () => {
       extra={
         <Space direction="vertical" size="large">
           <Space>
-            <Typography.Text>
-              {"Sorry, you don't have access to this page."}
-            </Typography.Text>
+            <Typography.Text>{"Sorry, you don't have access to this page."}</Typography.Text>
             {errorMessage && (
               <Tooltip title={errorMessage}>
                 <InfoCircleOutlined data-testid="error-component-tooltip" />
@@ -40,9 +38,9 @@ const FallBack = () => {
             type="primary"
             onClick={() => {
               if (routerType === "legacy") {
-                push("/");
+                push("/")
               } else {
-                go({ to: "/" });
+                go({ to: "/" })
               }
             }}
           >
@@ -51,5 +49,5 @@ const FallBack = () => {
         </Space>
       }
     />
-  );
+  )
 }

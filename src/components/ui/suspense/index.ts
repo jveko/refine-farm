@@ -1,1 +1,1 @@
-export { SuspenseList } from "./list";
+export { SuspenseList } from "./list"

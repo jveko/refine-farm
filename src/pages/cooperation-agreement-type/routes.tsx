@@ -1,16 +1,10 @@
-import { lazy } from "react";
+import { lazy } from "react"
 
-const CooperationAgreementTypeCreate = lazy(
-  () => import("@/pages/cooperation-agreement-type/create")
-);
+const CooperationAgreementTypeCreate = lazy(() => import("@/pages/cooperation-agreement-type/create"))
 
-const CooperationAgreementTypeEdit = lazy(
-  () => import("@/pages/cooperation-agreement-type/edit")
-);
+const CooperationAgreementTypeEdit = lazy(() => import("@/pages/cooperation-agreement-type/edit"))
 
-const CooperationAgreementTypeList = lazy(
-  () => import("@/pages/cooperation-agreement-type/list")
-);
+const CooperationAgreementTypeList = lazy(() => import("@/pages/cooperation-agreement-type/list"))
 
 export const cooperationAgreementTypeRouter = [
   {
@@ -25,4 +19,4 @@ export const cooperationAgreementTypeRouter = [
     path: "/cooperation-agreement-type/edit/:cooperationAgreementTypeId",
     element: <CooperationAgreementTypeEdit />,
   },
-];
+]

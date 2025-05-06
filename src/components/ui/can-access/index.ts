@@ -1,1 +1,1 @@
-export * from './can-access-route'
+export * from "./can-access-route"

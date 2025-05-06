@@ -1,13 +1,13 @@
-import type {FC} from "react";
+import type { FC } from "react"
 
-import {theme, Typography} from "antd";
+import { Typography, theme } from "antd"
 
 type PaginationTotalProps = {
-  total: number;
-};
+  total: number
+}
 
-export const PaginationTotal: FC<PaginationTotalProps> = ({total}) => {
-  const {token} = theme.useToken();
+export const PaginationTotal: FC<PaginationTotalProps> = ({ total }) => {
+  const { token } = theme.useToken()
   return (
     <div
       style={{
@@ -30,5 +30,5 @@ export const PaginationTotal: FC<PaginationTotalProps> = ({total}) => {
         {"Total Records "}
       </Typography.Text>
     </div>
-  );
-};
+  )
+}

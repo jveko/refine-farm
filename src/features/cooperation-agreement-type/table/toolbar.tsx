@@ -1,25 +1,22 @@
-import { Col, Form, FormProps, Input, Row, Select } from "antd";
-import {
-  ICooperationAgreementTypeTableFilter,
-  IDepartmentOption,
-} from "@/interfaces";
-import { CrudFilter } from "@refinedev/core";
-import { CrudSort } from "@refinedev/core";
-import { useSelect } from "@refinedev/antd";
-import { createStyles } from "antd-style";
-import { TableToolbar } from "@/components";
-import { useTableToolbar } from "@/hooks";
+import { TableToolbar } from "@/components"
+import { useTableToolbar } from "@/hooks"
+import type { ICooperationAgreementTypeTableFilter, IDepartmentOption } from "@/interfaces"
+import { useSelect } from "@refinedev/antd"
+import type { CrudFilter } from "@refinedev/core"
+import type { CrudSort } from "@refinedev/core"
+import { Col, Form, type FormProps, Input, Row, Select } from "antd"
+import { createStyles } from "antd-style"
 
 type Props = {
-  searchFormProps: FormProps<ICooperationAgreementTypeTableFilter>;
-  filters: CrudFilter[];
-  sorters: CrudSort[];
-  setSorters: (sorters: CrudSort[]) => void;
-};
+  searchFormProps: FormProps<ICooperationAgreementTypeTableFilter>
+  filters: CrudFilter[]
+  sorters: CrudSort[]
+  setSorters: (sorters: CrudSort[]) => void
+}
 export const CooperationAgreementTypeTableToolbar = (props: Props) => {
-  const { searchFormProps } = props;
-  const { styles } = useStyles();
-  const tableToolbar = useTableToolbar(props);
+  const { searchFormProps } = props
+  const { styles } = useStyles()
+  const tableToolbar = useTableToolbar(props)
   const { selectProps: departmentSelectProps } = useSelect<IDepartmentOption>({
     resource: "department/option",
     sorters: [
@@ -36,9 +33,9 @@ export const CooperationAgreementTypeTableToolbar = (props: Props) => {
         value: search,
       },
     ],
-    optionLabel: "name",
-    optionValue: "id",
-  });
+    optionLabel: (opt) => opt.name,
+    optionValue: (opt) => opt.id,
+  })
 
   return (
     <TableToolbar {...tableToolbar}>
@@ -46,24 +43,16 @@ export const CooperationAgreementTypeTableToolbar = (props: Props) => {
         <Row>
           <Col xs={24} md={12}>
             <Form.Item label={"Name"} name={"name"} className={styles.formItem}>
-              <Input placeholder={"Search Name"} onPressEnter={tableToolbar.search}/>
+              <Input placeholder={"Search Name"} onPressEnter={tableToolbar.search} />
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
-            <Form.Item
-              label={"Description"}
-              name={"description"}
-              className={styles.formItem}
-            >
+            <Form.Item label={"Description"} name={"description"} className={styles.formItem}>
               <Input placeholder={"Search Description"} onPressEnter={tableToolbar.search} />
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
-            <Form.Item
-              label={"Department"}
-              name={"department"}
-              className={styles.formItem}
-            >
+            <Form.Item label={"Department"} name={"department"} className={styles.formItem}>
               <Select
                 {...departmentSelectProps}
                 placeholder={"Select Department"}
@@ -74,11 +63,7 @@ export const CooperationAgreementTypeTableToolbar = (props: Props) => {
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
-            <Form.Item
-              label={"Status"}
-              name={"isActive"}
-              className={styles.formItem}
-            >
+            <Form.Item label={"Status"} name={"isActive"} className={styles.formItem}>
               <Select
                 allowClear
                 options={[
@@ -99,8 +84,8 @@ export const CooperationAgreementTypeTableToolbar = (props: Props) => {
         </Row>
       </Form>
     </TableToolbar>
-  );
-};
+  )
+}
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -109,5 +94,5 @@ const useStyles = createStyles(({ token }) => {
       padding: "4px 12px 0px 0px",
       margin: 0,
     },
-  };
-});
+  }
+})

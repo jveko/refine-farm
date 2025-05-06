@@ -1,10 +1,10 @@
-import React from "react";
-import { Button, Card, CardProps, Space, SpaceProps, Spin } from "antd";
-import { useBack, useRefineContext } from "@refinedev/core";
+import { useBack, useRefineContext } from "@refinedev/core"
+import { Button, Card, type CardProps, Space, type SpaceProps, Spin } from "antd"
+import type React from "react"
 
-import { SaveButton, type SaveButtonProps } from "@refinedev/antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { RefineCrudCreateProps } from "@refinedev/ui-types";
+import { ArrowLeftOutlined } from "@ant-design/icons"
+import { SaveButton, type SaveButtonProps } from "@refinedev/antd"
+import type { RefineCrudCreateProps } from "@refinedev/ui-types"
 
 type CreateProps = RefineCrudCreateProps<
   SaveButtonProps,
@@ -13,7 +13,7 @@ type CreateProps = RefineCrudCreateProps<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
   CardProps,
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
->;
+>
 /**
  * `<Create>` provides us a layout to display the page.
  * It does not contain any logic but adds extra functionalities like action buttons and giving titles to the page.
@@ -36,29 +36,27 @@ export const RefineCreate: React.FC<CreateProps> = ({
   footerButtons,
   goBack: goBackFromProps,
 }) => {
-  const { options: { breadcrumb: globalBreadcrumb } = {} } = useRefineContext();
+  const {
+    options: { breadcrumb: globalBreadcrumb } = {},
+  } = useRefineContext()
 
-  const back = useBack();
-  const breadcrumb =
-    typeof breadcrumbFromProps === "undefined"
-      ? globalBreadcrumb
-      : breadcrumbFromProps;
+  const back = useBack()
+  const breadcrumb = typeof breadcrumbFromProps === "undefined" ? globalBreadcrumb : breadcrumbFromProps
 
   const saveButtonProps: SaveButtonProps = {
     ...(isLoading ? { disabled: true } : {}),
     ...saveButtonPropsFromProps,
     htmlType: "submit",
-  };
+  }
 
   const defaultFooterButtons = (
     <>
       <SaveButton {...saveButtonProps} />
     </>
-  );
+  )
 
   return (
     <div style={{ marginBottom: "12px" }} {...(wrapperProps ?? {})}>
-
       <Card
         style={{
           padding: "0",
@@ -74,24 +72,20 @@ export const RefineCreate: React.FC<CreateProps> = ({
             {headerButtons
               ? typeof headerButtons === "function"
                 ? headerButtons({
-                  defaultButtons: null,
-                })
+                    defaultButtons: null,
+                  })
                 : headerButtons
               : null}
           </Space>
         }
         actions={[
-          <Space
-            key="action-buttons"
-            style={{ float: "right", marginRight: 24 }}
-            {...(footerButtonProps ?? {})}
-          >
+          <Space key="action-buttons" style={{ float: "right", marginRight: 24 }} {...(footerButtonProps ?? {})}>
             {footerButtons
               ? typeof footerButtons === "function"
                 ? footerButtons({
-                  defaultButtons: defaultFooterButtons,
-                  saveButtonProps: saveButtonProps,
-                })
+                    defaultButtons: defaultFooterButtons,
+                    saveButtonProps: saveButtonProps,
+                  })
                 : footerButtons
               : defaultFooterButtons}
           </Space>,
@@ -103,5 +97,5 @@ export const RefineCreate: React.FC<CreateProps> = ({
         </Spin>
       </Card>
     </div>
-  );
-};
+  )
+}

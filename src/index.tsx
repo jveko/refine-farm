@@ -1,29 +1,17 @@
-import { createRoot } from 'react-dom/client';
-import { RootRouter } from './App';
-import dayjs from 'dayjs';
-import relativeTime from "dayjs/plugin/relativeTime";
-import { msalInstance } from '@/config';
-import React from 'react';
-import { MsalProvider } from '@azure/msal-react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/config';
-import { RouterProvider } from 'react-router';
+import { msalInstance } from "@/config"
+import React from "react"
+import { createRoot } from "react-dom/client"
+import { RouterProvider } from "react-router"
+import { RootRouter } from "./App"
 
-dayjs.extend(relativeTime);
-
-const container = document.querySelector('#root');
-const root = createRoot(container!);
-
-await msalInstance.initialize();
+await msalInstance.initialize()
+const container = document.querySelector("#root")
+const root = createRoot(container!)
 
 root.render(
   <React.StrictMode>
     <React.Suspense>
-      <QueryClientProvider client={queryClient}>
-        <MsalProvider instance={msalInstance}>
-          <RouterProvider router={RootRouter} />
-        </MsalProvider>
-      </QueryClientProvider>
+      <RouterProvider router={RootRouter} />
     </React.Suspense>
-  </React.StrictMode>
-);
+  </React.StrictMode>,
+)

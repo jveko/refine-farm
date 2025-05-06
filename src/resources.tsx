@@ -1,9 +1,5 @@
-import { IResourceItem } from "@refinedev/core";
-import {
-  DashboardFilled,
-  FolderAddFilled,
-  OrderedListOutlined,
-} from "@ant-design/icons";
+import { DashboardFilled, FolderAddFilled, OrderedListOutlined } from "@ant-design/icons"
+import type { IResourceItem } from "@refinedev/core"
 
 export const resources: IResourceItem[] = [
   {
@@ -12,6 +8,15 @@ export const resources: IResourceItem[] = [
     meta: {
       label: "Dashboard",
       icon: <DashboardFilled />,
+    },
+  },
+  {
+    name: "dashboard2",
+    list: "/sadasd",
+    meta: {
+      label: "Dashboard",
+      icon: <DashboardFilled />,
+      parent: "dashboard",
     },
   },
   {
@@ -25,4 +30,4 @@ export const resources: IResourceItem[] = [
       icon: <FolderAddFilled />,
     },
   },
-];
+]

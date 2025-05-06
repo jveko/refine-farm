@@ -1,5 +1,5 @@
-import {CrudSort} from "@refinedev/core";
-import {SortOrder} from "antd/es/table/interface";
+import type { CrudSort } from "@refinedev/core"
+import type { SortOrder } from "antd/es/table/interface"
 
 export const sorterTable = (fieldName: string, sorters: CrudSort[]) => {
   const order = sorters.find((sorter: CrudSort) => sorter.field === fieldName)?.order
@@ -7,6 +7,6 @@ export const sorterTable = (fieldName: string, sorters: CrudSort[]) => {
   return {
     sorter: true,
     sortOrder,
-    showSorterTooltip: true
+    showSorterTooltip: true,
   }
 }

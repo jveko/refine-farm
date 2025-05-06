@@ -1,43 +1,43 @@
-import { CrudOperators } from "@refinedev/core";
+import type { CrudOperators } from "@refinedev/core"
 
 export const mapOperator = (operator: CrudOperators): string => {
   switch (operator) {
     case "eq":
-      return "==";
+      return "=="
     case "ne":
-      return "!=";
+      return "!="
     case "lt":
-      return "<";
+      return "<"
     case "gt":
-      return ">";
+      return ">"
     case "lte":
-      return "<=";
+      return "<="
     case "gte":
-      return ">=";
+      return ">="
     case "in":
     case "nin":
-      return "|=";
+      return "|="
     case "contains":
     case "ncontains":
-      return "-=-";
+      return "-=-"
     case "containss":
     case "ncontainss":
-      return "-=-*";
+      return "-=-*"
     case "null":
-      return "==";
+      return "=="
     case "startswith":
     case "nstartswith":
-      return "=-";
+      return "=-"
     case "startswiths":
     case "nstartswiths":
-      return "=-*";
+      return "=-*"
     case "endswith":
     case "nendswith":
-      return "-=";
+      return "-="
     case "endswiths":
     case "nendswiths":
-      return "-=*";
+      return "-=*"
     default:
-      return "";
+      return ""
   }
-};
+}

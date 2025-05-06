@@ -1,62 +1,76 @@
-import { AxiosInstance, isAxiosError } from "axios";
-import { AccessControlProvider } from "@refinedev/core";
-import { axiosAuth } from "@/config";
+import {ApiClient} from "@/utils/api-client"
+import type {AccessControlProvider} from "@refinedev/core"
+import ky, {HTTPError} from "ky";
 
-const { VITE_DOMAIN_APP: VITE_DOMAIN_APP } = import.meta.env;
+const {VITE_DOMAIN_APP} = import.meta.env
 
 if (!VITE_DOMAIN_APP) {
-  throw new Error("DOMAIN_APP is not defined");
+    throw new Error("DOMAIN_APP is not defined")
 }
 
 type CheckPermissionResponse = {
-  isAllowed: boolean;
-};
+    isAllowed: boolean
+}
 const accessControlProviderFactory = (
-  httpClient: AxiosInstance
+    service: ApiClient
 ): AccessControlProvider => ({
-  can: async ({ resource, action, params }) => {
-    try {
-      console.log(resource, action, params);
-      const resp = await httpClient.get<CheckPermissionResponse>(
-        "permissions/check",
-        {
-          params: {
-            domain: VITE_DOMAIN_APP,
-            resource: resource,
-            subject: "DPL",
-            action: action,
-          },
-        }
-      );
-      return {
-        can: resp.data.isAllowed,
-      };
-    } catch (e) {
-      if (isAxiosError(e)) {
-        switch (e.response?.status) {
-          case 401:
+    can: async ({resource, action, params}) => {
+        try {
+            console.log(resource, action, params)
+            const searchParams = new URLSearchParams()
+            // searchParams.append("domain", VITE_DOMAIN_APP)
+            searchParams.append("resource", resource!)
+            searchParams.append("action", action)
+            searchParams.append("subject", "DPL")
+            const resp = await service.instance.get<CheckPermissionResponse>("permissions/check", {
+                searchParams: searchParams,
+            }).json()
             return {
-              can: false,
-              reason: "Unauthorized",
-            };
-          case 403:
+                can: resp.isAllowed,
+            }
+        } catch (e) {
+            console.log("error", )
+            if (e instanceof HTTPError) {
+                switch (e.response?.status) {
+                    case 400:
+                        return {
+                            can: false,
+                            reason: "Validation Error",
+                        }
+                    case 401:
+                        return {
+                            can: false,
+                            reason: "Unauthorized",
+                        }
+                    case 403:
+                        return {
+                            can: false,
+                            reason: "Forbidden",
+                        }
+                }
+            }
             return {
-              can: false,
-              reason: "Forbidden",
-            };
+                can: false,
+                reason: (e as { message: string }).message,
+            }
         }
-      }
-      return {
-        can: false,
-        reason: (e as { message: string }).message,
-      };
-    }
-  },
-  options: {
-    buttons: {
-      enableAccessControl: true,
-      hideIfUnauthorized: false,
     },
-  },
-});
-export const accessControlProvider = accessControlProviderFactory(axiosAuth);
+    options: {
+        buttons: {
+            enableAccessControl: true,
+            hideIfUnauthorized: false,
+        },
+    },
+})
+
+const {VITE_AUTH_API_URL} = import.meta.env
+
+if (!VITE_AUTH_API_URL) {
+    throw new Error("AUTH_API_URL is not defined")
+}
+
+export const accessControlProvider = accessControlProviderFactory(
+    new ApiClient({
+        prefixUrl: VITE_AUTH_API_URL
+    })
+)

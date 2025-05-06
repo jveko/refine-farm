@@ -1,10 +1,10 @@
-import { Spin, Space, Typography } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import { CSSProperties } from "react";
+import { LoadingOutlined } from "@ant-design/icons"
+import { Space, Spin, Typography } from "antd"
+import type { CSSProperties } from "react"
 
 type Props = {
-  message?: string;
-  overlay?: boolean;
+  message?: string
+  overlay?: boolean
 }
 
 const overlayStyles: CSSProperties = {
@@ -21,7 +21,7 @@ const overlayStyles: CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   transition: "opacity 0.3s ease",
-};
+}
 
 export const FullScreenLoading = ({ message, overlay = false }: Props) => {
   const containerStyles: CSSProperties = overlay
@@ -33,24 +33,23 @@ export const FullScreenLoading = ({ message, overlay = false }: Props) => {
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
-      };
+      }
 
   return (
     <div style={containerStyles}>
       <Space direction="vertical" align="center" size="large">
-        <Spin
-          size="large"
-          indicator={<LoadingOutlined style={{ fontSize: 40, color: "#F07522" }} spin />}
-        />
-        <Typography.Text style={{
-          fontSize: 20,
-          color: overlay ? "white" : "inherit",
-          marginTop: 16,
-          textAlign: "center"
-        }}>
+        <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 40, color: "#F07522" }} spin />} />
+        <Typography.Text
+          style={{
+            fontSize: 20,
+            color: overlay ? "white" : "inherit",
+            marginTop: 16,
+            textAlign: "center",
+          }}
+        >
           {message || "Loading..."}
         </Typography.Text>
       </Space>
     </div>
-  );
+  )
 }
